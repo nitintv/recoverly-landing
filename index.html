@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recoverly — Know Which Patients Are Slipping Away</title>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#fafaf8;
+  --panel:#ffffff;
+  --text:#1a1d23;
+  --muted:#5a6170;
+  --accent:#0d7a50;
+  --accent2:#0a6843;
+  --accent-light:#edf7f1;
+  --line:#e5e5e0;
+  --danger:#c44536;
+  --danger-light:#fef2f0;
+  --warn:#b8860b;
+  --warn-light:#fdf6e8;
+  --ok:#0d7a50;
+  --ok-light:#edf7f1;
+  --warm:#f5f0e8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:"DM Sans", sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.container{max-width:1100px;margin:auto;padding:0 24px}
+section{padding:90px 0}
+h1,h2{font-family:"DM Serif Display", serif;font-weight:400}
+h1{font-size:clamp(38px,4.8vw,58px);line-height:1.08;margin-bottom:20px;letter-spacing:-.5px;color:var(--text)}
+h2{font-size:clamp(26px,3vw,38px);margin-bottom:18px;line-height:1.15;color:var(--text)}
+h3{font-size:17px;margin-bottom:8px;font-weight:700;color:var(--text)}
+p{color:var(--muted);margin:0}
+a{color:inherit;text-decoration:none}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:20;
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  background:rgba(250,250,248,.88);
+  border-bottom:1px solid var(--line);
+}
+.nav-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 0;
+}
+.brand{font-weight:800;font-size:17px;display:flex;align-items:center;gap:10px;color:var(--accent)}
+.brand-mark{
+  width:32px;height:32px;border-radius:10px;
+  background:linear-gradient(135deg,#0d7a50,#0a6843);
+}
+.nav-links{display:flex;gap:24px;color:var(--muted);font-weight:600;font-size:14px}
+.nav-links a:hover{color:var(--text)}
+.btn{
+  display:inline-block;padding:12px 22px;border-radius:8px;
+  font-weight:700;font-size:14px;text-decoration:none;
+  transition:all .15s ease;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{
+  background:var(--accent);
+  color:#ffffff;
+  box-shadow:0 4px 16px rgba(13,122,80,.18);
+}
+.btn-primary:hover{background:var(--accent2)}
+.btn-outline{border:1.5px solid var(--line);color:var(--text)}
+.btn-outline:hover{border-color:var(--text)}
+
+/* HERO */
+.hero{
+  padding:110px 0 90px;
+  background:linear-gradient(180deg,rgba(237,247,241,.4) 0%,rgba(250,250,248,0) 60%);
+}
+.hero-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 14px;border-radius:999px;
+  border:1px solid var(--line);
+  background:white;
+  color:var(--accent);font-weight:600;font-size:13px;
+  margin-bottom:24px;
+}
+.hero-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 0 4px rgba(13,122,80,.12);
+}
+.hero-sub{max-width:640px;font-size:18px;line-height:1.65;margin-bottom:32px;color:var(--muted)}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.hero-micro{font-size:13px;color:#8a8f9c}
+
+/* GRID + CARDS */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.card{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:14px;padding:28px;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.card p{font-size:15px;line-height:1.65}
+
+/* QUOTE */
+.quote-block{
+  padding:28px 28px 28px 24px;
+  background:var(--panel);border-radius:14px;
+  border:1px solid var(--line);
+  border-left:3px solid var(--accent);
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.quote-block p{font-size:18px;color:var(--text);line-height:1.5;font-style:italic}
+.quote-block cite{
+  display:block;margin-top:12px;font-size:13px;
+  color:var(--muted);font-style:normal;font-weight:600;
+}
+
+/* SIGNAL CARDS */
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:32px;align-items:center}
+.signal-card{
+  background:var(--panel);
+  border:1px solid var(--line);border-radius:16px;
+  padding:24px;
+  box-shadow:0 4px 20px rgba(0,0,0,.06);
+}
+.signal-label{font-weight:800;font-size:14px;margin-bottom:14px;letter-spacing:.2px;color:var(--text)}
+.signal-item{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:12px;border-radius:12px;
+  border:1px solid var(--line);
+  background:var(--bg);
+  margin-bottom:10px;
+}
+.signal-item:last-child{margin-bottom:0}
+.signal-tag{
+  font-size:11px;font-weight:800;letter-spacing:.3px;
+  padding:5px 10px;border-radius:999px;
+  min-width:80px;text-align:center;
+  flex-shrink:0;margin-top:2px;
+}
+.signal-tag.danger{background:var(--danger-light);color:var(--danger)}
+.signal-tag.warn{background:var(--warn-light);color:var(--warn)}
+.signal-tag.ok{background:var(--ok-light);color:var(--ok)}
+.signal-item p{font-size:13px;line-height:1.4;color:var(--muted)}
+.signal-item strong{color:var(--text);font-size:14px}
+
+/* FEATURES GRID */
+.features-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;
+}
+.feature-card{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:14px;padding:24px;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.feature-card h3{font-size:16px;margin-bottom:6px}
+.feature-card p{font-size:14px;line-height:1.6}
+
+/* VOICES */
+.voices-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;
+}
+.voice-card{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:14px;padding:24px;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.voice-card p{font-size:16px;color:var(--text);line-height:1.55;font-style:italic;margin-bottom:12px}
+.voice-card cite{font-size:12px;color:var(--muted);font-style:normal;font-weight:600;line-height:1.4;display:block}
+
+/* HIPAA BADGE */
+.hipaa-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  margin-top:12px;padding:6px 12px;border-radius:8px;
+  background:var(--accent-light);border:1px solid rgba(13,122,80,.15);
+  font-size:12px;font-weight:700;color:var(--accent);
+}
+
+/* CTA */
+.cta-section{
+  padding:100px 0;
+}
+.cta-box{
+  background:var(--panel);
+  border:1px solid var(--line);border-radius:18px;
+  padding:40px;
+  box-shadow:0 4px 24px rgba(0,0,0,.06);
+}
+.cta-box h2{margin-bottom:14px}
+
+/* FOOTER */
+.footer{
+  padding:32px 0;border-top:1px solid var(--line);
+  color:var(--muted);font-size:13px;
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+}
+.footer a{color:var(--muted)}
+.footer a:hover{color:var(--text)}
+
+/* HOW STEPS */
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.step-card{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:14px;padding:28px;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.step-num{
+  font-family:"DM Serif Display",serif;
+  font-size:42px;color:var(--accent);opacity:.25;
+  line-height:1;margin-bottom:12px;
+}
+.step-card h3{font-size:17px;margin-bottom:10px}
+.step-card p{font-size:14px;line-height:1.6}
+
+/* SECTION LABEL */
+.kicker{
+  text-transform:uppercase;letter-spacing:.18em;
+  font-size:12px;color:var(--accent);font-weight:800;
+  margin-bottom:10px;
+}
+
+/* WARM BG */
+.warm-bg{background:var(--warm)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .hero-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .features-grid{grid-template-columns:1fr}
+  .voices-grid{grid-template-columns:1fr}
+  .steps-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a class="brand" href="#top">
+        <div class="brand-mark"></div>
+        <span>Recoverly</span>
+      </a>
+      <div class="nav-links">
+        <a href="#problem">The Problem</a>
+        <a href="#how">How It Works</a>
+        <a href="#features">What You Get</a>
+      </div>
+      <a class="btn btn-primary" href="https://calendar.app.google/U4pgpMFG1BnQhPZt5" target="_blank">Book a Call</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-pill">
+          <span class="hero-dot"></span>
+          For Oncology & Urology Practices
+        </div>
+
+        <h1>Your patients are quietly disappearing between visits</h1>
+
+        <p class="hero-sub">
+          Recoverly shows your team exactly who needs outreach today — missed med pickups, overdue follow-ups, patients who've gone dark — so your coordinator isn't working from memory and a spreadsheet.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://calendar.app.google/U4pgpMFG1BnQhPZt5" target="_blank">Book a 15-Minute Call</a>
+          <a class="btn btn-outline" href="#how">See How It Works</a>
+        </div>
+        <p class="hero-micro">HIPAA Compliant · Works with any EHR · No integration project required</p>
+      </div>
+
+      <div class="signal-card">
+        <div class="signal-label">What Recoverly catches</div>
+        <div class="signal-item">
+          <span class="signal-tag danger">Missed fill</span>
+          <div>
+            <strong>Xtandi approved 12 days ago</strong>
+            <p>Pharmacy confirms — never picked up. No outreach logged.</p>
+          </div>
+        </div>
+        <div class="signal-item">
+          <span class="signal-tag warn">No-show</span>
+          <div>
+            <strong>PSA follow-up missed</strong>
+            <p>Last visit 97 days ago. No reschedule on file.</p>
+          </div>
+        </div>
+        <div class="signal-item">
+          <span class="signal-tag ok">Drifting</span>
+          <div>
+            <strong>3 outreach attempts, no response</strong>
+            <p>Patient hasn't engaged in 6 weeks. May need provider outreach.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE STRIP -->
+<section style="padding:50px 0" class="warm-bg">
+  <div class="container">
+    <div class="quote-block" style="background:white">
+      <p>"We don't know they're missing… until we get the bad scan back."</p>
+      <cite>— Nurse Practitioner, urology group, community hospital system</cite>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="container">
+    <p class="kicker">The Problem</p>
+    <h2>By the time you find out a patient dropped off, it's already too late.</h2>
+
+    <div class="grid" style="margin-top:32px">
+      <div class="card">
+        <h3>Silent drop-offs</h3>
+        <p>A patient gets approved for Xtandi and never picks it up. Your coordinator finds out three weeks later when she pulls the chart for something else and sees the fill never went through. Nobody flagged it. Nobody knew.</p>
+      </div>
+      <div class="card">
+        <h3>Manual worklists</h3>
+        <p>Your MAs and coordinators are buried in spreadsheets, trying to remember who to call. When someone is out sick or quits, their list disappears with them. The new person starts from scratch.</p>
+      </div>
+      <div class="card">
+        <h3>Staff burnout</h3>
+        <p>Your care team stays late, takes work home, and worries about the patients they couldn't get to today. They're managing 200 patients with a spreadsheet and their own memory. That's not a system — it's unsustainable.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="warm-bg">
+  <div class="container">
+    <p class="kicker">How It Works</p>
+    <h2>From invisible drop-offs to a daily action list — in 30 minutes.</h2>
+
+    <div class="steps-grid" style="margin-top:32px">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>Upload your patient list</h3>
+        <p>Export a CSV from your EHR — Athena, Epic, eClinicalWorks, whatever you use. Patient names, last visit dates, medications, contact info. That's it.</p>
+        <div class="hipaa-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          All data encrypted. HIPAA compliant.
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>Recoverly flags who needs attention</h3>
+        <p>Every patient gets scanned for the things your team worries about: overdue visits, medications that were never picked up, people you haven't been able to reach. Each one gets a priority score so your staff isn't guessing who to call first.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>Your staff knows who to call first</h3>
+        <p>Every morning, your coordinator opens Recoverly and sees the patients who need outreach today — sorted by priority. She sends a text, makes a call, logs what happened. No spreadsheet. No guessing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT YOU GET -->
+<section id="features">
+  <div class="container">
+    <p class="kicker">What You Get</p>
+    <h2>Built for how specialty practices actually work.</h2>
+
+    <div class="features-grid" style="margin-top:32px">
+      <div class="feature-card">
+        <h3>Prioritized patient queue</h3>
+        <p>Your staff sees who needs help most — not an alphabetical list. Patients sorted by how urgent they are and how long it's been since anyone reached them.</p>
+      </div>
+      <div class="feature-card">
+        <h3>HIPAA-compliant outreach</h3>
+        <p>Send texts and emails that feel human, not robotic. Templates ready to go. Every message logged for compliance and handoffs.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Works with any EHR</h3>
+        <p>Athena, Epic, eClinicalWorks — doesn't matter. Upload a CSV and you're live. No IT department needed, no six-month integration project.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Specialty drug monitoring</h3>
+        <p>Built-in watchlist for 22+ oncology and urology medications — Xtandi, Orgovyx, Lynparza, Lupron, Keytruda, Zytiga, and others. You'll know when a refill gap appears.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Team visibility</h3>
+        <p>See which patients have been contacted, who responded, and who's still waiting. Know whether outreach is happening without asking for status updates every afternoon.</p>
+      </div>
+      <div class="feature-card">
+        <h3>30-minute setup</h3>
+        <p>No contracts. No implementation fees. Upload your first patient list and start triaging today. If it doesn't help, walk away.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VOICES FROM THE FIELD -->
+<section class="warm-bg">
+  <div class="container">
+    <p class="kicker">What We Hear From Clinics</p>
+
+    <div class="voices-grid" style="margin-top:24px">
+      <div class="voice-card">
+        <p>"If I don't call today, I'll forget. And by the time I remember, it's been three weeks."</p>
+        <cite>Medical Assistant, 8-provider oncology practice, Southeast</cite>
+      </div>
+      <div class="voice-card">
+        <p>"If something popped up to tell me who to call, I'd use it."</p>
+        <cite>RN, 25 years in care coordination</cite>
+      </div>
+      <div class="voice-card">
+        <p>"I wish there was a way to make it easier. I racked my brain for three weeks and I just don't have the answer."</p>
+        <cite>Operations Manager, after stepping into the coordinator role during staff turnover</cite>
+      </div>
+      <div class="voice-card">
+        <p>"We do our best, but patients disappear. We only find out when it's too late."</p>
+        <cite>Patient Navigator, community health center</cite>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-box">
+      <h2>Nobody tells you a patient stopped coming back. You just figure it out too late.</h2>
+      <p style="max-width:600px;margin-bottom:10px;font-size:16px;line-height:1.65">
+        We're talking to a small number of oncology and urology practices to figure out exactly what would help. 15 minutes. No pitch deck. Just a conversation about what's broken and what would actually make your team's life easier.
+      </p>
+      <p class="hero-micro" style="margin-bottom:28px">
+        If patient drop-off isn't a problem you deal with, we'll know in the first two minutes and won't waste your time.
+      </p>
+      <a class="btn btn-primary" href="https://calendar.app.google/U4pgpMFG1BnQhPZt5" target="_blank" style="font-size:16px;padding:16px 28px">
+        Book a 15-Minute Call &rarr;
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<div class="container">
+  <div class="footer">
+    <div>&copy; 2026 Recoverly &middot; team@recoverly.ai</div>
+    <div style="display:flex;gap:20px">
+      <a href="#problem">The Problem</a>
+      <a href="#how">How It Works</a>
+      <a href="#features">What You Get</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
+     
